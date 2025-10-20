@@ -1,97 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ferretería Castaño S.A.S. - Herramientas, materiales y productos de calidad al mejor precio.">
+  <meta name="keywords" content="ferretería, herramientas, materiales, Castaño, S.A.S.">
+  <meta name="author" content="Ferretería Castaño S.A.S.">
   <title>Ferretería Castaño S.A.S.</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
-  <!-- 🟡 Encabezado -->
+
+  <!-- === ENCABEZADO === -->
   <header>
-    <div class="logo-container">
-      <img src="logo.png" alt="Logo Ferretería" class="logo" />
+    <div class="logo">
+      <img src="logo.png" alt="Logo Ferretería Castaño">
       <h1>Ferretería Castaño S.A.S.</h1>
     </div>
 
-    <nav class="menu">
-      <a href="#inicio">Inicio</a>
-      <a href="#catalogo">Catálogo</a>
-      <a href="#quienes">Quiénes somos</a>
+    <nav>
+      <a href="#inicio" class="activo">Inicio</a>
+      <a href="#productos">Productos</a>
       <a href="#contacto">Contáctanos</a>
-      <button id="abrir-carrito" class="carrito-btn">🛒 (<span id="contador">0</span>)</button>
+      <div class="carrito-icono" onclick="mostrarCarrito()">
+        🛒 <span id="contador">0</span>
+      </div>
     </nav>
   </header>
 
-  <!-- 🔹 Overlay gris -->
-  <div id="overlay" class="oculto"></div>
-
-  <!-- 🛒 Carrito lateral -->
-  <aside id="carrito">
-    <h2>Tu carrito</h2>
-    <div id="items-carrito"></div>
-    <p id="total">Total: $0</p>
-    <button id="finalizar-compra">Finalizar compra</button>
-    <button id="cerrar-carrito" class="cerrar-carrito">Cerrar ✖</button>
-  </aside>
-
-  <!-- 📄 Contenido principal -->
+  <!-- === SECCIONES === -->
   <main>
-    <!-- 🏠 Sección Inicio -->
+    <!-- Inicio -->
     <section id="inicio" class="seccion activa">
-      <h2>Bienvenido</h2>
-      <p>Encuentra las mejores herramientas y productos de ferretería para tus proyectos al mejor precio.</p>
+      <h2>Bienvenido a Ferretería Castaño</h2>
+      <p>Encuentra todo lo que necesitas para tu hogar y proyectos. Calidad, confianza y servicio en un solo lugar.</p>
     </section>
 
-    <!-- 🧰 Sección Catálogo -->
-    <section id="catalogo" class="seccion">
-      <h2>Catálogo</h2>
-      <p>Explora nuestros productos más destacados:</p>
-
-      <div class="productos">
-        <div class="producto">
-          <img src="martillo.png" alt="Martillo" />
-          <h3>Martillo</h3>
-          <p>$25.000</p>
-          <button class="agregar">Agregar</button>
-        </div>
-
-        <div class="producto">
-          <img src="flexometro.jpg" alt="Flexómetro Stanley" />
-          <h3>Flexómetro Stanley</h3>
-          <p>$35.000</p>
-          <button class="agregar">Agregar</button>
-        </div>
-
-        <div class="producto">
-          <img src="bateria.png" alt="Batería" />
-          <h3>Batería</h3>
-          <p>$200.000</p>
-          <button class="agregar">Agregar</button>
-        </div>
-      </div>
+    <!-- Productos -->
+    <section id="productos" class="seccion">
+      <h2>Nuestros Productos</h2>
+      <div class="productos"></div>
     </section>
 
-    <!-- 🧍 Sección Quiénes somos -->
-    <section id="quienes" class="seccion">
-      <h2>Quiénes somos</h2>
-      <p>
-        En <strong>Ferretería Castaño S.A.S.</strong> Somos una ferreteria con mas de 30 años de antiguedad trabajando con algunas de las empresas mas grandes de el pais
-      </p>
-    </section>
-
-    <!-- 📞 Sección Contáctanos -->
+    <!-- Contacto -->
     <section id="contacto" class="seccion">
       <h2>Contáctanos</h2>
-      <p>Puedes comunicarte con nosotros a través de:</p>
-      <ul>
-        <li>📍 Dirección: carrera 25 #13-13</li>
-        <li>📞 Teléfono: (601) 3750595</li>
-        <li>📧 Email: ferrecastano@gmail.com</li>
-      </ul>
+      <form action="https://formspree.io/f/xzbljvrn" method="POST">
+        <input type="text" name="nombre" placeholder="Tu nombre" required>
+        <input type="email" name="correo" placeholder="Tu correo" required>
+        <textarea name="mensaje" placeholder="Tu mensaje" required></textarea>
+        <button type="submit">Enviar</button>
+      </form>
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <!-- === CARRITO === -->
+  <div id="carrito" class="carrito">
+    <h3>🛍️ Tu carrito</h3>
+    <div id="carrito-items"></div>
+    <p>Total: $<span id="total">0</span></p>
+    <button onclick="vaciarCarrito()">Vaciar</button>
+  </div>
+
+  <footer>
+    <p>© 2025 Ferretería Castaño S.A.S. | Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="script.js?v=3"></script>
 </body>
 </html>

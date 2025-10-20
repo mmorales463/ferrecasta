@@ -1,87 +1,83 @@
-// 🛒 Carrito
-const abrirCarrito = document.getElementById("abrir-carrito");
-const cerrarCarrito = document.getElementById("cerrar-carrito");
-const carrito = document.getElementById("carrito");
-const overlay = document.getElementById("overlay");
-const contador = document.getElementById("contador");
-const itemsCarrito = document.getElementById("items-carrito");
-const total = document.getElementById("total");
+// === CAMBIO DE SECCIONES ===
+const links = document.querySelectorAll("nav a");
+const secciones = document.querySelectorAll(".seccion");
 
-let carritoItems = [];
-let sumaTotal = 0;
-
-abrirCarrito.addEventListener("click", () => {
-  carrito.classList.add("visible");
-  overlay.classList.add("visible");
-});
-
-cerrarCarrito.addEventListener("click", () => {
-  carrito.classList.remove("visible");
-  overlay.classList.remove("visible");
-});
-
-overlay.addEventListener("click", () => {
-  carrito.classList.remove("visible");
-  overlay.classList.remove("visible");
-});
-
-// 🧺 Agregar productos
-document.querySelectorAll(".agregar").forEach(btn => {
-  btn.addEventListener("click", (e) => {
-    const card = e.target.closest(".producto");
-    const producto = card.querySelector("h3").textContent;
-    const precio = parseInt(card.querySelector("p").textContent.replace("$", "").replace(".", ""));
-    const imagen = card.querySelector("img").src;
-
-    carritoItems.push({ producto, precio, imagen });
-    sumaTotal += precio;
-
-    contador.textContent = carritoItems.length;
-    total.textContent = `Total: $${sumaTotal.toLocaleString()}`;
-    renderCarrito();
-  });
-});
-
-function renderCarrito() {
-  itemsCarrito.innerHTML = "";
-  carritoItems.forEach((item, i) => {
-    const div = document.createElement("div");
-    div.classList.add("item-carrito");
-    div.innerHTML = `
-      <img src="${item.imagen}" alt="${item.producto}">
-      <div class="info-item">
-        <p>${item.producto}</p>
-        <p class="precio">$${item.precio.toLocaleString()}</p>
-      </div>
-      <button class="eliminar" data-index="${i}">✖</button>
-    `;
-    itemsCarrito.appendChild(div);
-  });
-
-  document.querySelectorAll(".eliminar").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      const i = e.target.dataset.index;
-      sumaTotal -= carritoItems[i].precio;
-      carritoItems.splice(i, 1);
-      contador.textContent = carritoItems.length;
-      total.textContent = `Total: $${sumaTotal.toLocaleString()}`;
-      renderCarrito();
-    });
-  });
-}
-
-// 📍 Navegación entre secciones
-document.querySelectorAll(".menu a").forEach(link => {
+links.forEach(link => {
   link.addEventListener("click", e => {
     e.preventDefault();
-    document.querySelectorAll(".seccion").forEach(sec => sec.classList.remove("activa"));
-    const target = e.target.getAttribute("href");
-    document.querySelector(target).classList.add("activa");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    links.forEach(l => l.classList.remove("activo"));
+    link.classList.add("activo");
+
+    const id = link.getAttribute("href").replace("#", "");
+    secciones.forEach(s => s.classList.remove("activa"));
+    document.getElementById(id).classList.add("activa");
   });
 });
 
-// Mostrar "Quiénes somos" al inicio
-window.addEventListener("DOMContentLoaded", () => {
-  document.querySelector("#quienes").classList.add("activa");
+// === PRODUCTOS DINÁMICOS ===
+const productosDiv = document.querySelector(".productos");
+
+const productos = [
+  { nombre: "Martillo", precio: 25000, imagen: "martillo.png" },
+  { nombre: "bateria", precio: 15000, imagen: "bateria.png" },
+  { nombre: "flexometro", precio: 18000, imagen: "flexometro.jpg" },
+  { nombre: "Taladro", precio: 180000, imagen: "taladro.jpg" },
+  { nombre: "Llave inglesa", precio: 28000, imagen: "llave.png" }
+];
+
+
+productos.forEach(p => {
+  const div = document.createElement("div");
+  div.classList.add("producto");
+  div.innerHTML = `
+    <img src="${p.imagen}" alt="${p.nombre}">
+    <h3>${p.nombre}</h3>
+    <p>$${p.precio.toLocaleString()}</p>
+    <button onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">Agregar</button>
+  `;
+  productosDiv.appendChild(div);
 });
+
+// === CARRITO ===
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+function actualizarCarrito() {
+  const contador = document.getElementById("contador");
+  const carritoItems = document.getElementById("carrito-items");
+  const total = document.getElementById("total");
+  carritoItems.innerHTML = "";
+
+  carrito.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      ${item.nombre} - $${item.precio.toLocaleString()}
+      <button onclick="eliminarItem(${i})">❌</button>
+    `;
+    carritoItems.appendChild(div);
+  });
+
+  contador.textContent = carrito.length;
+  total.textContent = carrito.reduce((acc, i) => acc + i.precio, 0).toLocaleString();
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+
+function agregarAlCarrito(nombre, precio) {
+  carrito.push({ nombre, precio });
+  actualizarCarrito();
+}
+
+function eliminarItem(index) {
+  carrito.splice(index, 1);
+  actualizarCarrito();
+}
+
+function vaciarCarrito() {
+  carrito = [];
+  actualizarCarrito();
+}
+
+function mostrarCarrito() {
+  document.getElementById("carrito").classList.toggle("activo");
+}
+
+actualizarCarrito();
