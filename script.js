@@ -5,18 +5,12 @@ const secciones = document.querySelectorAll(".seccion");
 enlaces.forEach(enlace => {
   enlace.addEventListener("click", e => {
     e.preventDefault();
-<<<<<<< HEAD
 
     // Cambiar clase activa en menú
     enlaces.forEach(a => a.classList.remove("activo"));
     enlace.classList.add("activo");
 
     // Mostrar sección seleccionada
-=======
-    enlaces.forEach(a => a.classList.remove("activo"));
-    enlace.classList.add("activo");
-
->>>>>>> 4efa8f9f8cba2a48ced910d84edd6a661241c08b
     const id = enlace.getAttribute("data-seccion");
     secciones.forEach(sec => sec.classList.remove("activa"));
     document.getElementById(id).classList.add("activa");
@@ -29,18 +23,13 @@ const carritoDiv = document.getElementById("carrito");
 const carritoItems = document.getElementById("carrito-items");
 const contador = document.getElementById("contador");
 const total = document.getElementById("total");
-<<<<<<< HEAD
 const finalizarBtn = document.getElementById("finalizarCompra");
 
-// Botón para mostrar/ocultar carrito
-=======
-
->>>>>>> 4efa8f9f8cba2a48ced910d84edd6a661241c08b
+// Mostrar / Ocultar carrito
 document.getElementById("carrito-btn").addEventListener("click", () => {
   carritoDiv.classList.toggle("activo");
 });
 
-<<<<<<< HEAD
 // Agregar producto al carrito
 function agregarAlCarrito(nombre, precio, img) {
   const item = carrito.find(i => i.nombre === nombre);
@@ -53,26 +42,15 @@ function agregarAlCarrito(nombre, precio, img) {
 }
 
 // Actualizar vista del carrito
-=======
-function agregarAlCarrito(nombre, precio, img) {
-  const item = carrito.find(i => i.nombre === nombre);
-  if (item) item.cantidad++;
-  else carrito.push({ nombre, precio, img, cantidad: 1 });
-  actualizarCarrito();
-}
-
->>>>>>> 4efa8f9f8cba2a48ced910d84edd6a661241c08b
 function actualizarCarrito() {
   carritoItems.innerHTML = "";
   let totalCompra = 0;
 
   carrito.forEach(item => {
     totalCompra += item.precio * item.cantidad;
-<<<<<<< HEAD
 
     const div = document.createElement("div");
     div.classList.add("item-carrito");
-
     div.innerHTML = `
       <img src="${item.img}" width="40">
       <span>${item.nombre}</span>
@@ -83,17 +61,6 @@ function actualizarCarrito() {
         <button onclick="eliminarProducto('${item.nombre}')">🗑️</button>
       </div>
     `;
-
-=======
-    const div = document.createElement("div");
-    div.classList.add("item-carrito");
-    div.innerHTML = `
-      <img src="${item.img}" width="40"> 
-      <span>${item.nombre}</span>
-      <span>x${item.cantidad}</span>
-      <button onclick="aumentarCantidad('${item.nombre}')">+</button>
-    `;
->>>>>>> 4efa8f9f8cba2a48ced910d84edd6a661241c08b
     carritoItems.appendChild(div);
   });
 
@@ -101,17 +68,13 @@ function actualizarCarrito() {
   total.textContent = `Total: $${totalCompra.toLocaleString()}`;
 }
 
-<<<<<<< HEAD
 // Aumentar cantidad
-=======
->>>>>>> 4efa8f9f8cba2a48ced910d84edd6a661241c08b
 function aumentarCantidad(nombre) {
   const item = carrito.find(i => i.nombre === nombre);
   if (item) item.cantidad++;
   actualizarCarrito();
 }
 
-<<<<<<< HEAD
 // Disminuir cantidad
 function disminuirCantidad(nombre) {
   const item = carrito.find(i => i.nombre === nombre);
@@ -136,28 +99,23 @@ function vaciarCarrito() {
 }
 
 // Finalizar compra
-finalizarBtn.addEventListener("click", () => {
-=======
-document.getElementById("finalizarCompra").addEventListener("click", () => {
->>>>>>> 4efa8f9f8cba2a48ced910d84edd6a661241c08b
-  if (carrito.length === 0) {
-    alert("Tu carrito está vacío.");
-    return;
-  }
-<<<<<<< HEAD
-  alert("Compra finalizada. Se generará un documento con tu pedido (simulado).");
-  vaciarCarrito();
-=======
-  alert("Compra finalizada. Se generará un documento con tu pedido.");
->>>>>>> 4efa8f9f8cba2a48ced910d84edd6a661241c08b
-});
+if (finalizarBtn) {
+  finalizarBtn.addEventListener("click", () => {
+    if (carrito.length === 0) {
+      alert("Tu carrito está vacío.");
+      return;
+    }
+    alert("Compra finalizada. Se generará un documento con tu pedido (simulado).");
+    vaciarCarrito();
+  });
+}
 
-// === FORMULARIO ===
-document.getElementById("formContacto").addEventListener("submit", e => {
-  e.preventDefault();
-<<<<<<< HEAD
-  alert("guardando la informacion");
-=======
-  alert("Mensaje enviado. Se guardará en un archivo .docx (simulado).");
->>>>>>> 4efa8f9f8cba2a48ced910d84edd6a661241c08b
-});
+// === FORMULARIO DE CONTACTO ===
+const form = document.getElementById("formContacto");
+if (form) {
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    alert("Mensaje enviado correctamente. Gracias por contactarnos.");
+    form.reset();
+  });
+}
