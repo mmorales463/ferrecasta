@@ -2,14 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
 import os
 
 # ============================================================
-# 🚀 Configuración de la aplicación
+# 🚀 Configuración de FastAPI
 # ============================================================
 app = FastAPI(
     title="Ferretería Castaño API",
-    description="API y frontend de Ferretería Castaño S.A.S.",
+    description="Backend y servidor de frontend de Ferretería Castaño S.A.S.",
     version="1.0.0"
 )
 
@@ -18,31 +19,30 @@ app = FastAPI(
 # ============================================================
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ============================================================
-# 📁 Directorios base
+# 📁 Rutas de carpetas
 # ============================================================
-BASE_DIR = os.path.dirname(__file__)  # api/
-PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))  # PaginaFerreCastano/
+BASE_DIR = os.path.dirname(__file__)          # api/
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))  
 FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
 STATIC_DIR = os.path.join(PROJECT_ROOT, "static")
 
 # ============================================================
-# 📦 Archivos estáticos (imagenes, css, js)
+# 📦 Archivos estáticos (img, css, js)
 # ============================================================
-# Sirve las imágenes (logo, productos, etc.)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# Sirve el frontend (css y js)
-app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
+# Nota: Sirves CSS y JS manualmente abajo (más seguro)
+# No usamos /frontend como static para evitar conflicto de rutas.
 
 # ============================================================
-# 🧰 API de productos
+# 🧰 API DE PRODUCTOS (RF2)
 # ============================================================
 @app.get("/api/productos")
 async def obtener_productos():
@@ -54,7 +54,21 @@ async def obtener_productos():
     ]
 
 # ============================================================
-# 🌐 Páginas del frontend
+# 📨 API DE CONTACTO (RF2)
+# ============================================================
+class MensajeContacto(BaseModel):
+    nombre: str
+    correo: str
+    mensaje: str
+
+@app.post("/api/contacto")
+async def recibir_contacto(datos: MensajeContacto):
+    print("📩 Nuevo mensaje recibido:")
+    print(datos)
+    return {"mensaje": "Contacto enviado correctamente"}
+
+# ============================================================
+# 🌐 SERVIR LAS PÁGINAS HTML
 # ============================================================
 @app.get("/")
 async def home():
@@ -71,3 +85,14 @@ async def contacto():
 @app.get("/quienes-somos")
 async def quienes_somos():
     return FileResponse(os.path.join(FRONTEND_DIR, "quienes-somos.html"))
+
+# ============================================================
+# 📄 SERVIR CSS Y JS (Ruta correcta)
+# ============================================================
+@app.get("/style.css")
+async def style_css():
+    return FileResponse(os.path.join(FRONTEND_DIR, "style.css"))
+
+@app.get("/script.js")
+async def script_js():
+    return FileResponse(os.path.join(FRONTEND_DIR, "script.js"))
