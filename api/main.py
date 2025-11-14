@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import os
+import logging
+from datetime import datetime
 
 # ============================================================
 # 🚀 Configuración de FastAPI
@@ -36,11 +38,22 @@ STATIC_DIR = os.path.join(PROJECT_ROOT, "static")
 # ============================================================
 # 📦 Archivos estáticos (img, css, js)
 # ============================================================
-# /static para imágenes
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-
-# /frontend para css, js, imágenes y lo que sea
 app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
+
+# ============================================================
+# 🧰 LOGGING DE REQUESTS PARA AZURE LOG STREAM
+# ============================================================
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = datetime.utcnow()
+    logging.info(f"➡️ Request: {request.method} {request.url}")
+    response = await call_next(request)
+    process_time = (datetime.utcnow() - start_time).total_seconds()
+    logging.info(f"⬅️ Response: {response.status_code} {request.url} - {process_time:.3f}s")
+    return response
 
 # ============================================================
 # 🧰 API DE PRODUCTOS (RF2)
@@ -64,11 +77,10 @@ class Contacto(BaseModel):
 
 @app.post("/api/contacto")
 async def recibir_contacto(data: Contacto):
-    print("📨 Nuevo mensaje desde formulario:")
-    print(f"Nombre: {data.nombre}")
-    print(f"Correo: {data.correo}")
-    print(f"Mensaje: {data.mensaje}")
-    
+    logging.info("📨 Nuevo mensaje desde formulario:")
+    logging.info(f"Nombre: {data.nombre}")
+    logging.info(f"Correo: {data.correo}")
+    logging.info(f"Mensaje: {data.mensaje}")
     return {"status": "ok", "mensaje": "Mensaje recibido exitosamente"}
 
 # ============================================================
