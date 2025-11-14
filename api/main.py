@@ -28,7 +28,7 @@ app.add_middleware(
 # ============================================================
 # 📁 Rutas de carpetas
 # ============================================================
-BASE_DIR = os.path.dirname(__file__)          # api/
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # api/
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))  
 FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
 STATIC_DIR = os.path.join(PROJECT_ROOT, "static")
@@ -36,8 +36,11 @@ STATIC_DIR = os.path.join(PROJECT_ROOT, "static")
 # ============================================================
 # 📦 Archivos estáticos (img, css, js)
 # ============================================================
+# /static para imágenes
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+# /frontend para css, js, imágenes y lo que sea
+app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
 
 # ============================================================
 # 🧰 API DE PRODUCTOS (RF2)
@@ -51,7 +54,6 @@ async def obtener_productos():
         {"nombre": "Batería", "precio": 12000, "imagen": "/static/bateria.png"},
     ]
 
-
 # ============================================================
 # 📩 API: Contacto (RF6)
 # ============================================================
@@ -62,13 +64,12 @@ class Contacto(BaseModel):
 
 @app.post("/api/contacto")
 async def recibir_contacto(data: Contacto):
-    print("📨 Nuevo mensaje recibido desde el formulario:")
+    print("📨 Nuevo mensaje desde formulario:")
     print(f"Nombre: {data.nombre}")
     print(f"Correo: {data.correo}")
     print(f"Mensaje: {data.mensaje}")
     
     return {"status": "ok", "mensaje": "Mensaje recibido exitosamente"}
-
 
 # ============================================================
 # 🌐 SERVIR LAS PÁGINAS HTML
@@ -88,19 +89,3 @@ async def contacto():
 @app.get("/quienes-somos")
 async def quienes_somos():
     return FileResponse(os.path.join(FRONTEND_DIR, "quienes-somos.html"))
-
-
-# ============================================================
-# 📄 SERVIR CSS Y JS (Incluye contacto.js)
-# ============================================================
-@app.get("/style.css")
-async def style_css():
-    return FileResponse(os.path.join(FRONTEND_DIR, "style.css"))
-
-@app.get("/script.js")
-async def script_js():
-    return FileResponse(os.path.join(FRONTEND_DIR, "script.js"))
-
-@app.get("/contacto.js")
-async def contacto_js():
-    return FileResponse(os.path.join(FRONTEND_DIR, "contacto.js"))
