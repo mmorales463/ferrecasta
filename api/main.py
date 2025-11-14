@@ -19,7 +19,7 @@ app = FastAPI(
 # ============================================================
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["ferreteriacastano-a5bvdxdtdwfkbze5.canadacentral-01.azurewebsites.net"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
