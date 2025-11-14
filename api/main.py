@@ -38,8 +38,6 @@ STATIC_DIR = os.path.join(PROJECT_ROOT, "static")
 # ============================================================
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# Nota: Sirves CSS y JS manualmente abajo (más seguro)
-# No usamos /frontend como static para evitar conflicto de rutas.
 
 # ============================================================
 # 🧰 API DE PRODUCTOS (RF2)
@@ -52,12 +50,11 @@ async def obtener_productos():
         {"nombre": "Llave Inglesa", "precio": 30000, "imagen": "/static/llave.png"},
         {"nombre": "Batería", "precio": 12000, "imagen": "/static/bateria.png"},
     ]
-    
-# ============================================================
-# 📩 API: Contacto
-# ============================================================
-from pydantic import BaseModel
 
+
+# ============================================================
+# 📩 API: Contacto (RF6)
+# ============================================================
 class Contacto(BaseModel):
     nombre: str
     correo: str
@@ -70,8 +67,8 @@ async def recibir_contacto(data: Contacto):
     print(f"Correo: {data.correo}")
     print(f"Mensaje: {data.mensaje}")
     
-    # Aquí podrías guardar en BD, enviar correo, etc.
     return {"status": "ok", "mensaje": "Mensaje recibido exitosamente"}
+
 
 # ============================================================
 # 🌐 SERVIR LAS PÁGINAS HTML
@@ -92,8 +89,9 @@ async def contacto():
 async def quienes_somos():
     return FileResponse(os.path.join(FRONTEND_DIR, "quienes-somos.html"))
 
+
 # ============================================================
-# 📄 SERVIR CSS Y JS (Ruta correcta)
+# 📄 SERVIR CSS Y JS (Incluye contacto.js)
 # ============================================================
 @app.get("/style.css")
 async def style_css():
@@ -102,3 +100,7 @@ async def style_css():
 @app.get("/script.js")
 async def script_js():
     return FileResponse(os.path.join(FRONTEND_DIR, "script.js"))
+
+@app.get("/contacto.js")
+async def contacto_js():
+    return FileResponse(os.path.join(FRONTEND_DIR, "contacto.js"))
