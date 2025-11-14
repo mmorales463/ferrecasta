@@ -8,6 +8,7 @@
   <!-- Rutas absolutas para evitar errores de carga -->
   <link rel="stylesheet" href="/frontend/style.css" />
   <script src="/frontend/script.js" defer></script>
+  <script src="/frontend/contacto.js" defer></script>
 </head>
 
 <body>
@@ -34,19 +35,16 @@
       <h2>Contáctanos</h2>
 
       <form id="formContacto" class="form-contacto">
-        <!-- Nombre: solo letras y espacios -->
         <input type="text" id="nombre" placeholder="Tu nombre" 
                pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$" 
                title="Solo se permiten letras y espacios" 
                required />
 
-        <!-- Correo: debe tener un punto después del @ -->
         <input type="email" id="correo" placeholder="Tu correo" 
                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
                title="Correo debe contener un '@' y un '.' después" 
                required />
 
-        <!-- Mensaje -->
         <textarea id="mensaje" placeholder="Tu mensaje" required></textarea>
 
         <button type="submit">Enviar</button>
