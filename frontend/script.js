@@ -167,6 +167,42 @@ async function cargarProductos() {
   }
 }
 
+// =========================
+//   FORMULARIO DE CONTACTO (RF6)
+// =========================
+const formContacto = document.getElementById("formContacto");
+
+if (formContacto) {
+  formContacto.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      nombre: document.getElementById("nombre").value,
+      correo: document.getElementById("correo").value,
+      mensaje: document.getElementById("mensaje").value
+    };
+
+    try {
+      const response = await fetch("/api/contacto", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        alert("Mensaje enviado correctamente.");
+        formContacto.reset();
+      } else {
+        alert("Error al enviar el mensaje.");
+      }
+    } catch (error) {
+      alert("Error de conexión con el servidor.");
+    }
+  });
+}
+
 // === EVENTOS ===
 document.addEventListener("DOMContentLoaded", () => {
   cargarProductos();
