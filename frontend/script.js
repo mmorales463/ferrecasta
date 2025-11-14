@@ -21,6 +21,7 @@ function guardarCarrito(carrito) {
 function actualizarContadorCarrito() {
   const carrito = obtenerCarrito();
   const contador = document.getElementById("contador");
+
   if (contador) {
     const totalItems = carrito.reduce((sum, p) => sum + p.cantidad, 0);
     contador.textContent = totalItems;
@@ -39,6 +40,7 @@ function agregarAlCarrito(nombre, precio, img) {
   const index = carrito.findIndex(p => p.nombre === nombre);
 
   if (index !== -1) {
+    // Limite máximo por producto
     if (carrito[index].cantidad < 50) {
       carrito[index].cantidad += 1;
     } else {
@@ -70,6 +72,7 @@ function eliminarDelCarrito(nombre) {
 function aumentarCantidad(nombre) {
   const carrito = obtenerCarrito();
   const index = carrito.findIndex(p => p.nombre === nombre);
+
   if (index !== -1) {
     if (carrito[index].cantidad < 50) {
       carrito[index].cantidad += 1;
@@ -77,9 +80,11 @@ function aumentarCantidad(nombre) {
       alert("Has alcanzado la cantidad máxima de 50 unidades por producto.");
     }
   }
+
   guardarCarrito(carrito);
   renderizarCarrito();
 
+  // Animación al aumentar
   const cantidadSpans = document.querySelectorAll(".item-carrito");
   cantidadSpans.forEach(div => {
     const span = div.querySelector(".cantidad");
@@ -132,32 +137,34 @@ function renderizarCarrito() {
   actualizarContadorCarrito();
 }
 
-// === CARGAR PRODUCTOS ===
-function cargarProductos() {
+// === CARGAR PRODUCTOS DESDE FASTAPI ===
+async function cargarProductos() {
   const productosContainer = document.querySelector(".productos");
   if (!productosContainer) return;
 
-  const productos = [
-    new Producto("Martillo", 22000, "/static/martillo.png"),
-    new Producto("Taladro", 150000, "/static/taladro.jpg"),
-    new Producto("Llave Inglesa", 30000, "/static/llave.png"),
-    new Producto("Batería", 12000, "/static/bateria.png")
-  ];
+  try {
+    const res = await fetch("/api/productos");
+    const productos = await res.json();
 
-  productosContainer.innerHTML = productos
-    .map(
-      (p, i) => `
-      <div class="producto" style="animation-delay: ${i * 0.1}s;">
-        <img src="${p.img}" alt="${p.nombre}">
-        <h3>${p.nombre}</h3>
-        <p>$${p.precio.toLocaleString()}</p>
-        <button onclick="agregarAlCarrito('${p.nombre}', ${p.precio}, '${p.img}')">
-          Agregar al carrito
-        </button>
-      </div>
-    `
-    )
-    .join("");
+    productosContainer.innerHTML = productos
+      .map(
+        (p, i) => `
+        <div class="producto" style="animation-delay: ${i * 0.1}s;">
+          <img src="${p.imagen}" alt="${p.nombre}">
+          <h3>${p.nombre}</h3>
+          <p>$${p.precio.toLocaleString()}</p>
+          <button onclick="agregarAlCarrito('${p.nombre}', ${p.precio}, '${p.imagen}')">
+            Agregar al carrito
+          </button>
+        </div>
+      `
+      )
+      .join("");
+
+  } catch (error) {
+    console.error("Error cargando productos:", error);
+    productosContainer.innerHTML = "<p>Error cargando productos.</p>";
+  }
 }
 
 // === EVENTOS ===
@@ -166,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderizarCarrito();
   actualizarContadorCarrito();
 
-  // Toggle carrito al hacer click en el icono
+  // Toggle carrito
   const carritoBtn = document.getElementById("carrito-btn");
   const carritoDiv = document.getElementById("carrito");
 
