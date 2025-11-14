@@ -52,20 +52,26 @@ async def obtener_productos():
         {"nombre": "Llave Inglesa", "precio": 30000, "imagen": "/static/llave.png"},
         {"nombre": "Batería", "precio": 12000, "imagen": "/static/bateria.png"},
     ]
+    
+# ============================================================
+# 📩 API: Contacto
+# ============================================================
+from pydantic import BaseModel
 
-# ============================================================
-# 📨 API DE CONTACTO (RF2)
-# ============================================================
-class MensajeContacto(BaseModel):
+class Contacto(BaseModel):
     nombre: str
     correo: str
     mensaje: str
 
 @app.post("/api/contacto")
-async def recibir_contacto(datos: MensajeContacto):
-    print("📩 Nuevo mensaje recibido:")
-    print(datos)
-    return {"mensaje": "Contacto enviado correctamente"}
+async def recibir_contacto(data: Contacto):
+    print("📨 Nuevo mensaje recibido desde el formulario:")
+    print(f"Nombre: {data.nombre}")
+    print(f"Correo: {data.correo}")
+    print(f"Mensaje: {data.mensaje}")
+    
+    # Aquí podrías guardar en BD, enviar correo, etc.
+    return {"status": "ok", "mensaje": "Mensaje recibido exitosamente"}
 
 # ============================================================
 # 🌐 SERVIR LAS PÁGINAS HTML
