@@ -8,6 +8,52 @@ class Producto {
   }
 }
 
+// ============================================
+// === RF7: LISTA DOBLEMENTE ENLAZADA ========
+// ============================================
+
+class Nodo {
+  constructor(producto) {
+    this.producto = producto;
+    this.prev = null;
+    this.next = null;
+  }
+}
+
+class ListaDoble {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+  }
+
+  agregar(producto) {
+    const nuevo = new Nodo(producto);
+
+    if (!this.head) {
+      this.head = this.tail = nuevo;
+      return;
+    }
+
+    this.tail.next = nuevo;
+    nuevo.prev = this.tail;
+    this.tail = nuevo;
+  }
+
+  obtenerTodos() {
+    const arr = [];
+    let actual = this.head;
+    while (actual) {
+      arr.push(actual.producto);
+      actual = actual.next;
+    }
+    return arr;
+  }
+}
+
+// Instancia global para productos
+const listaProductos = new ListaDoble();
+
+
 // === UTILIDADES ===
 function obtenerCarrito() {
   return JSON.parse(localStorage.getItem("carrito")) || [];
@@ -40,7 +86,6 @@ function agregarAlCarrito(nombre, precio, img) {
   const index = carrito.findIndex(p => p.nombre === nombre);
 
   if (index !== -1) {
-    // Limite máximo por producto
     if (carrito[index].cantidad < 50) {
       carrito[index].cantidad += 1;
     } else {
@@ -84,7 +129,6 @@ function aumentarCantidad(nombre) {
   guardarCarrito(carrito);
   renderizarCarrito();
 
-  // Animación al aumentar
   const cantidadSpans = document.querySelectorAll(".item-carrito");
   cantidadSpans.forEach(div => {
     const span = div.querySelector(".cantidad");
@@ -137,7 +181,10 @@ function renderizarCarrito() {
   actualizarContadorCarrito();
 }
 
-// === CARGAR PRODUCTOS DESDE FASTAPI ===
+// ===================================
+//   CARGAR PRODUCTOS DESDE FASTAPI
+//   *MODIFICADO PARA RF7*
+// ===================================
 async function cargarProductos() {
   const productosContainer = document.querySelector(".productos");
   if (!productosContainer) return;
@@ -146,7 +193,13 @@ async function cargarProductos() {
     const res = await fetch("/api/productos");
     const productos = await res.json();
 
-    productosContainer.innerHTML = productos
+    // Guardar productos en la lista doble
+    productos.forEach(p => listaProductos.agregar(p));
+
+    // Recuperar productos desde memoria (lista doble)
+    const productosMemoria = listaProductos.obtenerTodos();
+
+    productosContainer.innerHTML = productosMemoria
       .map(
         (p, i) => `
         <div class="producto" style="animation-delay: ${i * 0.1}s;">
@@ -166,6 +219,7 @@ async function cargarProductos() {
     productosContainer.innerHTML = "<p>Error cargando productos.</p>";
   }
 }
+
 
 // =========================
 //   FORMULARIO DE CONTACTO (RF6)
@@ -209,7 +263,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderizarCarrito();
   actualizarContadorCarrito();
 
-  // Toggle carrito
   const carritoBtn = document.getElementById("carrito-btn");
   const carritoDiv = document.getElementById("carrito");
 
@@ -219,3 +272,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
