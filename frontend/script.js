@@ -48,6 +48,21 @@ class ListaDoble {
     }
     return arr;
   }
+
+  // === Extensión para cumplir OCP ===
+  [Symbol.iterator]() {
+    let actual = this.head;
+    return {
+      next() {
+        if (actual) {
+          const value = actual.producto;
+          actual = actual.next;
+          return { value, done: false };
+        }
+        return { value: undefined, done: true };
+      }
+    };
+  }
 }
 
 // Instancia global para productos
