@@ -235,3 +235,15 @@ document.addEventListener("DOMContentLoaded", () => {
   renderizarCarrito();
   actualizarContadorCarrito();
 });
+
+document.getElementById("carrito-btn").addEventListener("click", () => {
+  const carrito = document.getElementById("carrito");
+
+  // Alternar visibilidad
+  if (carrito.style.display === "none" || carrito.style.display === "") {
+    carrito.style.display = "block";
+  } else {
+    carrito.style.display = "none";
+  }
+});
+
