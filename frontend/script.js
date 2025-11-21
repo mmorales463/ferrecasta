@@ -1,9 +1,9 @@
 // === CLASES ===
 class Producto {
-  constructor(nombre, precio, img, cantidad = 1) {
+  constructor(nombre, precio, imagen, cantidad = 1) {
     this.nombre = nombre;
     this.precio = precio;
-    this.img = img;
+    this.imagen = imagen;  // <--- unificado
     this.cantidad = cantidad;
   }
 }
@@ -81,7 +81,7 @@ function actualizarContadorCarrito() {
 }
 
 // === FUNCIONES DEL CARRITO ===
-function agregarAlCarrito(nombre, precio, img) {
+function agregarAlCarrito(nombre, precio, imagen) {
   const carrito = obtenerCarrito();
   const index = carrito.findIndex(p => p.nombre === nombre);
 
@@ -92,7 +92,7 @@ function agregarAlCarrito(nombre, precio, img) {
       alert("Has alcanzado la cantidad máxima de 50 unidades por producto.");
     }
   } else {
-    carrito.push(new Producto(nombre, precio, img));
+    carrito.push(new Producto(nombre, precio, imagen));
   }
 
   guardarCarrito(carrito);
@@ -128,16 +128,6 @@ function aumentarCantidad(nombre) {
 
   guardarCarrito(carrito);
   renderizarCarrito();
-
-  const cantidadSpans = document.querySelectorAll(".item-carrito");
-  cantidadSpans.forEach(div => {
-    const span = div.querySelector(".cantidad");
-    const productoNombre = div.querySelector("span").textContent.split(" - ")[0];
-    if (productoNombre === nombre) {
-      span.classList.add("cantidad-pop");
-      setTimeout(() => span.classList.remove("cantidad-pop"), 200);
-    }
-  });
 }
 
 function vaciarCarrito() {
@@ -164,7 +154,7 @@ function renderizarCarrito() {
     .map(
       (p) => `
       <div class="item-carrito">
-        <img src="${p.img}" alt="${p.nombre}" width="50">
+        <img src="${p.imagen}" alt="${p.nombre}" width="50">
         <span>${p.nombre} - $${(p.precio * p.cantidad).toLocaleString()}</span>
         <div class="cantidad-control">
           <button class="menos" onclick="eliminarDelCarrito('${p.nombre}')">–</button>
@@ -193,10 +183,13 @@ async function cargarProductos() {
     const res = await fetch("/api/productos");
     const productos = await res.json();
 
-    // Guardar productos en la lista doble
-    productos.forEach(p => listaProductos.agregar(p));
+    // Convertir cada entrada en un Producto REAL
+    productos.forEach(p => {
+      listaProductos.agregar(
+        new Producto(p.nombre, p.precio, p.imagen)
+      );
+    });
 
-    // Recuperar productos desde memoria (lista doble)
     const productosMemoria = listaProductos.obtenerTodos();
 
     productosContainer.innerHTML = productosMemoria
@@ -221,55 +214,9 @@ async function cargarProductos() {
 }
 
 
-// =========================
-//   FORMULARIO DE CONTACTO (RF6)
-// =========================
-const formContacto = document.getElementById("formContacto");
-
-if (formContacto) {
-  formContacto.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const data = {
-      nombre: document.getElementById("nombre").value,
-      correo: document.getElementById("correo").value,
-      mensaje: document.getElementById("mensaje").value
-    };
-
-    try {
-      const response = await fetch("/api/contacto", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
-
-      if (response.ok) {
-        alert("Mensaje enviado correctamente.");
-        formContacto.reset();
-      } else {
-        alert("Error al enviar el mensaje.");
-      }
-    } catch (error) {
-      alert("Error de conexión con el servidor.");
-    }
-  });
-}
-
 // === EVENTOS ===
 document.addEventListener("DOMContentLoaded", () => {
   cargarProductos();
   renderizarCarrito();
   actualizarContadorCarrito();
-
-  const carritoBtn = document.getElementById("carrito-btn");
-  const carritoDiv = document.getElementById("carrito");
-
-  if (carritoBtn && carritoDiv) {
-    carritoBtn.addEventListener("click", () => {
-      carritoDiv.style.display = carritoDiv.style.display === "none" ? "block" : "none";
-    });
-  }
 });
-
